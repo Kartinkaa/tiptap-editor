@@ -1,3 +1,7 @@
+<!-- This component integrates a Tiptap editor with additional functionality 
+  for adjusting font weight via a slider. It handles the editor's lifecycle, 
+  state management, and provides a clean UI for text editing and formatting. -->
+
 <template>
   <editor-content class="content" :editor="editor" />
   <div>{{ exportedText }}</div>

@@ -14,3 +14,13 @@ This template should help get you started developing with Vue 3 and TypeScript i
 npm install
 npm run dev
 ```
+
+Overview
+This project provides a rich text editor with the ability to adjust font weight using a slider. It demonstrates the use of Vue 3's Composition API and <script setup>, TypeScript for type safety, and Vite for fast development and build tooling.
+
+Features
+Rich Text Editing: Powered by Tiptap, an extensible text editor framework.
+Font Weight Adjustment: Customizable font weight using a slider component.
+Modular Components: Well-organized and reusable Vue components.
+Type Safety: Leveraging TypeScript for robust type checking.
+Fast Development: Using Vite for instant hot module replacement and fast builds.

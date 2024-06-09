@@ -1,3 +1,7 @@
+/* The FontWeight node extends Tiptap's functionality by allowing font weight 
+customization through commands. It includes methods for setting, retrieving, 
+and exporting font weight. */
+
 import { Node } from '@tiptap/vue-3'
 
 declare module '@tiptap/core' {
@@ -12,6 +16,7 @@ declare module '@tiptap/core' {
 
 export interface FontWeightNodeType {}
 
+//This function ensures that the font weight value stays within a specified range
 function clamp(number: number, min: number, max: number) {
   return Math.max(min, Math.min(number, max))
 }
@@ -30,9 +35,11 @@ export const FontWeight = Node.create<FontWeightNodeType>({
         attributes: {
           fontWeight: {
             default: null,
-            parseHTML: (element) =>
-              element.style.fontWeight.replace(/['"]+/g, ''),
+            parseHTML: (
+              element: HTMLElement //Extracts the fontWeight from the HTML element's style
+            ) => element.style.fontWeight.replace(/['"]+/g, ''),
             renderHTML: (attributes) => {
+              //Adds the fontWeight as an inline style if it is not nul
               if (!attributes.fontWeight) {
                 return {}
               }
