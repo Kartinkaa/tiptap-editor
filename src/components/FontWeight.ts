@@ -1,23 +1,21 @@
-/* The FontWeight node extends Tiptap's functionality by allowing font weight 
-customization through commands. It includes methods for setting, retrieving, 
-and exporting font weight. */
-
 import { Node } from '@tiptap/vue-3'
+import { CommandProps } from '@tiptap/core'
 
 declare module '@tiptap/core' {
-  interface Commands {
+  interface Commands<ReturnType> {
     FontWeightNodeType: {
-      setFontWeight: (number) => void
-      getFontWeight: () => number
+      setFontWeight: (sliderValue: number) => ReturnType
+      getFontWeight: () => number | null
       exportTextWithFontWeight: () => string
     }
   }
 }
 
-export interface FontWeightNodeType {}
+export interface FontWeightNodeType {
+  types: string[]
+}
 
-//This function ensures that the font weight value stays within a specified range
-function clamp(number: number, min: number, max: number) {
+function clamp(number: number, min: number, max: number): number {
   return Math.max(min, Math.min(number, max))
 }
 
@@ -25,38 +23,37 @@ export const FontWeight = Node.create<FontWeightNodeType>({
   name: 'FontWeight',
   addOptions() {
     return {
-      types: ['textStyle'],
+      types: ['textStyle']
     }
   },
   addGlobalAttributes() {
     return [
       {
-        types: this.options.types,
+        types: (this.options as FontWeightNodeType).types,
         attributes: {
           fontWeight: {
             default: null,
-            parseHTML: (
-              element: HTMLElement //Extracts the fontWeight from the HTML element's style
-            ) => element.style.fontWeight.replace(/['"]+/g, ''),
-            renderHTML: (attributes) => {
-              //Adds the fontWeight as an inline style if it is not nul
+            parseHTML: (element: HTMLElement) =>
+              element.style.fontWeight.replace(/['"]+/g, ''),
+            renderHTML: (attributes: { fontWeight: string | null }) => {
               if (!attributes.fontWeight) {
                 return {}
               }
               return {
-                style: `font-weight: ${attributes.fontWeight}`,
+                style: `font-weight: ${attributes.fontWeight}`
               }
-            },
-          },
-        },
-      },
+            }
+          }
+        }
+      }
     ]
   },
+  // @ts-ignore: Unreachable code error
   addCommands() {
     return {
       setFontWeight:
         (sliderValue: number) =>
-        ({ chain }) => {
+        ({ chain }: CommandProps) => {
           const fontWeight = Math.ceil(sliderValue / 10) * 100
           const roundedFontWeight = clamp(fontWeight, 100, 900)
 
@@ -66,15 +63,15 @@ export const FontWeight = Node.create<FontWeightNodeType>({
         },
       getFontWeight:
         () =>
-        ({ state }) => {
+        ({ state }: CommandProps): number | null => {
           const { from, to } = state.selection
-          let fontWeight = null
+          let fontWeight: number | null = null
 
-          state.doc.nodesBetween(from, to, (node) => {
+          state.doc.nodesBetween(from, to, node => {
             if (node.marks) {
-              node.marks.forEach((mark) => {
+              node.marks.forEach(mark => {
                 if (mark.attrs.fontWeight) {
-                  fontWeight = mark.attrs.fontWeight
+                  fontWeight = parseInt(mark.attrs.fontWeight, 10)
                 }
               })
             }
@@ -84,15 +81,15 @@ export const FontWeight = Node.create<FontWeightNodeType>({
         },
       exportTextWithFontWeight:
         () =>
-        ({ state }) => {
+        ({ state }: CommandProps): string => {
           let annotatedText = ''
 
-          state.doc.descendants((node, pos) => {
+          state.doc.descendants(node => {
             if (node.isText) {
-              let text = node.text
-              let fontWeight = null
+              const text = node.text
+              let fontWeight: string | null = null
 
-              node.marks.forEach((mark) => {
+              node.marks.forEach(mark => {
                 if (mark.attrs.fontWeight) {
                   fontWeight = mark.attrs.fontWeight
                 }
@@ -107,7 +104,7 @@ export const FontWeight = Node.create<FontWeightNodeType>({
           })
 
           return annotatedText.trim()
-        },
+        }
     }
-  },
+  }
 })

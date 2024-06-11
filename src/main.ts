@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
-import './style.css'
+// @ts-ignore: Unreachable code error
 import App from './App.vue'
+import './style.css'
 
 createApp(App).mount('#app')
